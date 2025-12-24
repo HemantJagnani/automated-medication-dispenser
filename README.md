@@ -1,87 +1,289 @@
 # Automated Medication Dispenser
 
-An IoT-based smart medication dispenser with fingerprint security and automatic reminders via Telegram.
+An IoT-enabled smart medication dispenser with biometric security, real-time scheduling, and automated missed-dose alerts. Built using ESP32, Flask web server, and Telegram Bot API for comprehensive medication management.
 
 ## Features
 
-- 🔐 **Fingerprint Authentication** - Only authorized users can access medications
-- ⏰ **Smart Scheduling** - Web dashboard to set medicine timings
-- 👋 **Hand Detection** - IR sensor ensures safe dispensing
-- 🤖 **Servo Mechanism** - Automated pill release
-- 📱 **Telegram Alerts** - Missed dose notifications
+### 🔐 Biometric Security
+Fingerprint verification (R307/AS608 sensor) required before dispensing medication, ensuring only authorized users can access medications.
 
-## Hardware Components
+### 📅 Smart Scheduling
+Web-based dashboard for adding and editing medicine timings for each compartment with an intuitive interface.
 
-- ESP32 Microcontroller
-- R307/AS608 Fingerprint Sensor
-- DS3231 RTC Module
-- IR Proximity Sensor
-- Servo Motor
-- LEDs & Buzzer
+### 👋 IR Confirmation
+Infrared proximity sensor ensures pills are dispensed only when a hand is detected, preventing wastage.
+
+### ⚙️ Servo-Based Mechanism
+Controlled pill release using a servo-driven sliding mechanism for precise medication dispensing.
+
+### 📲 Missed Dose Alerts
+Automatic Telegram notifications sent to caregivers if the user does not respond to scheduled medication reminders.
+
+### 🌐 Web App + API
+Clean frontend UI with Flask backend that ESP32 queries to fetch medication schedules in real-time.
+
+---
 
 ## Project Structure
 
 ```
+E-Lab_Project/
 ├── hardware and schematic/
-│   ├── Dispenser.ino          # ESP32 code
+│   ├── Dispenser.ino          # ESP32 firmware for medication dispenser
 │   ├── Circuit.jpeg           # Circuit diagram
-│   └── Schematic.jpeg         # Wiring diagram
+│   ├── Schematic.jpeg         # Detailed schematic
+│   └── YouTubeVideoLink.html  # Demo video link
 │
 └── web-app/
-    ├── index.html             # Web interface
-    ├── server.py              # Flask backend
-    ├── app.js                 # Frontend logic
-    ├── styles.css             # Styling
-    └── schedules.json         # Medicine schedules
+    ├── index.html             # Frontend UI
+    ├── styles.css             # Styling for web interface
+    ├── app.js                 # Frontend JavaScript logic
+    ├── server.py              # Flask backend server
+    └── schedules.json         # Medicine schedule storage
 ```
 
-## Setup
+---
 
-### Web Application
+## Hardware Components
 
-1. Install Flask:
+| Component | Model/Type | Purpose |
+|-----------|------------|---------|
+| **Microcontroller** | ESP32 | Main controller with WiFi capability |
+| **Fingerprint Sensor** | R307/AS608 | Biometric authentication |
+| **RTC Module** | DS3231 | Real-time clock for scheduling |
+| **IR Sensor** | Proximity Sensor | Hand detection |
+| **Servo Motor** | Standard Servo | Pill dispensing mechanism |
+| **LEDs** | Standard LEDs | Status indicators |
+| **Buzzer** | Active Buzzer | Audio alerts |
+
+---
+
+## Software Setup
+
+### Prerequisites
+
+- Python 3.x
+- Flask library
+- ESP32 development environment (Arduino IDE)
+- Telegram Bot Token
+
+### Web Application Setup
+
+1. **Navigate to the web-app directory**
+   ```bash
+   cd web-app
+   ```
+
+2. **Install Flask**
    ```bash
    pip install flask
    ```
 
-2. Run the server:
+3. **Start the Flask server**
    ```bash
-   cd web-app
    python server.py
    ```
 
-3. Open browser: `http://localhost:5000`
+4. **Access the web interface**
+   Open your browser and navigate to:
+   ```
+   http://localhost:5000
+   ```
 
-### ESP32 Firmware
+### ESP32 Firmware Setup
 
-1. Open `Dispenser.ino` in Arduino IDE
-2. Install required libraries:
+1. **Open Arduino IDE**
+   
+2. **Install required libraries:**
    - Adafruit Fingerprint Sensor Library
-   - RTClib
-   - ESP32 Servo
-3. Update WiFi credentials in code
-4. Upload to ESP32
+   - RTClib (for DS3231)
+   - ESP32 Servo Library
+   - WiFi library (built-in)
+   - HTTPClient library (built-in)
 
-## How It Works
+3. **Configure WiFi credentials** in `Dispenser.ino`:
+   ```cpp
+   const char* ssid = "YOUR_WIFI_SSID";
+   const char* password = "YOUR_WIFI_PASSWORD";
+   ```
 
-1. Set medicine schedule via web dashboard
-2. ESP32 checks time using RTC module
-3. Alarm triggers at scheduled time
-4. User authenticates with fingerprint
-5. Place hand under dispenser (IR detection)
-6. Servo releases pills
-7. If missed, Telegram alert is sent
+4. **Set server endpoint** in `Dispenser.ino`:
+   ```cpp
+   const char* serverURL = "http://YOUR_SERVER_IP:5000/list?format=esp32";
+   ```
 
-## Telegram Setup
-
-1. Create bot via [@BotFather](https://t.me/botfather)
-2. Get bot token and chat ID
-3. Add to ESP32 code
-
-## Demo
-
-Check `hardware and schematic/YouTubeVideoLink.html` for working demo!
+5. **Upload firmware** to ESP32
 
 ---
 
-**Built for E-Lab Project** 🎓
+## API Endpoints
+
+### Get Schedule (ESP32 Format)
+```
+GET /list?format=esp32
+```
+Returns medication schedule in ESP32-compatible format.
+
+**Response Example:**
+```json
+[
+  {
+    "compartment": 1,
+    "time": "08:00",
+    "medicine": "Aspirin"
+  },
+  {
+    "compartment": 2,
+    "time": "14:00",
+    "medicine": "Vitamin D"
+  }
+]
+```
+
+---
+
+## Telegram Bot Setup
+
+1. **Create a Telegram Bot:**
+   - Message [@BotFather](https://t.me/botfather) on Telegram
+   - Use `/newbot` command and follow instructions
+   - Save the bot token
+
+2. **Configure in firmware:**
+   ```cpp
+   const char* telegramToken = "YOUR_BOT_TOKEN";
+   const char* chatID = "YOUR_CHAT_ID";
+   ```
+
+3. **Get your Chat ID:**
+   - Message your bot
+   - Visit: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
+   - Find your `chat_id` in the response
+
+---
+
+## How It Works
+
+### Workflow
+
+1. **Schedule Setup:** User configures medication times via web dashboard
+2. **Time Check:** ESP32 with RTC module continuously monitors current time
+3. **Alarm Trigger:** When scheduled time arrives, buzzer sounds and LED blinks
+4. **Authentication:** User places finger on sensor for verification
+5. **Hand Detection:** IR sensor confirms hand is positioned correctly
+6. **Dispensing:** Servo motor rotates to release pills from designated compartment
+7. **Missed Dose Alert:** If user doesn't respond within timeout period, Telegram notification is sent to caregiver
+
+### State Machine
+
+```
+IDLE → ALARM → FINGERPRINT_CHECK → HAND_DETECT → DISPENSE → IDLE
+                      ↓
+                 TIMEOUT → TELEGRAM_ALERT
+```
+
+---
+
+## Demo
+
+Demo photos and videos are available in the `hardware and schematic/` folder:
+- **YouTubeVideoLink.html** - Working demonstration video
+
+---
+
+## Circuit Diagrams
+
+Detailed circuit connections and schematics are available:
+- **Circuit.jpeg** - Complete circuit layout
+- **Schematic.jpeg** - Detailed component connections
+
+---
+
+## Configuration Files
+
+### schedules.json Format
+```json
+{
+  "schedules": [
+    {
+      "id": 1,
+      "compartment": 1,
+      "medicine": "Medicine Name",
+      "time": "HH:MM",
+      "enabled": true
+    }
+  ]
+}
+```
+
+---
+
+## Troubleshooting
+
+### ESP32 Not Connecting to WiFi
+- Verify SSID and password in firmware
+- Check WiFi network is 2.4GHz (ESP32 doesn't support 5GHz)
+- Ensure router is in range
+
+### Fingerprint Sensor Not Working
+- Check sensor wiring (TX, RX, VCC, GND)
+- Verify baud rate matches firmware configuration
+- Re-enroll fingerprints if necessary
+
+### Servo Not Dispensing
+- Check servo power supply (may need external 5V)
+- Verify servo signal pin connection
+- Test servo angle limits in code
+
+### Telegram Alerts Not Sending
+- Verify bot token and chat ID
+- Check internet connectivity
+- Ensure Telegram API is not blocked by firewall
+
+---
+
+## Future Enhancements
+
+- [ ] Mobile app for iOS/Android
+- [ ] Multiple user profiles with individual fingerprints
+- [ ] Medication refill reminders
+- [ ] Integration with pharmacy APIs
+- [ ] Voice notifications
+- [ ] Cloud-based schedule backup
+- [ ] Analytics dashboard for medication adherence
+
+---
+
+## Safety & Compliance
+
+> [!WARNING]
+> This is a prototype device for educational purposes. For medical use, ensure compliance with local healthcare regulations and obtain necessary certifications.
+
+> [!IMPORTANT]
+> Always consult healthcare professionals for medication management. This device is a reminder tool and should not replace medical advice.
+
+---
+
+## License
+
+This project is open-source and available for educational purposes.
+
+---
+
+## Contributors
+
+Developed as an E-Lab project demonstrating IoT integration in healthcare applications.
+
+---
+
+## Support
+
+For issues or questions:
+- Check the troubleshooting section above
+- Review circuit diagrams and schematics
+- Verify all hardware connections
+- Ensure software dependencies are installed
+
+---
+
+**Built with ❤️ for better medication management**
