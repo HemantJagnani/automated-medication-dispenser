@@ -49,7 +49,7 @@ E-Lab_Project/
 | Component | Model/Type | Purpose |
 |-----------|------------|---------|
 | **Microcontroller** | ESP32 | Main controller with WiFi capability |
-| **Fingerprint Sensor** | R307/AS608 | Biometric authentication |
+| **Fingerprint Sensor** | AS608 | Biometric authentication |
 | **RTC Module** | DS3231 | Real-time clock for scheduling |
 | **IR Sensor** | Proximity Sensor | Hand detection |
 | **Servo Motor** | Standard Servo | Pill dispensing mechanism |
@@ -163,4 +163,3 @@ Detailed circuit connections and schematics are available:
 
 ---
 
-**Built with ❤️ for E-Lab Project**
