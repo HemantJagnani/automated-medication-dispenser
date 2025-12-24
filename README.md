@@ -116,32 +116,6 @@ E-Lab_Project/
 
 ---
 
-## API Endpoints
-
-### Get Schedule (ESP32 Format)
-```
-GET /list?format=esp32
-```
-Returns medication schedule in ESP32-compatible format.
-
-**Response Example:**
-```json
-[
-  {
-    "compartment": 1,
-    "time": "08:00",
-    "medicine": "Aspirin"
-  },
-  {
-    "compartment": 2,
-    "time": "14:00",
-    "medicine": "Vitamin D"
-  }
-]
-```
-
----
-
 ## Telegram Bot Setup
 
 1. **Create a Telegram Bot:**
@@ -164,8 +138,6 @@ Returns medication schedule in ESP32-compatible format.
 
 ## How It Works
 
-### Workflow
-
 1. **Schedule Setup:** User configures medication times via web dashboard
 2. **Time Check:** ESP32 with RTC module continuously monitors current time
 3. **Alarm Trigger:** When scheduled time arrives, buzzer sounds and LED blinks
@@ -173,14 +145,6 @@ Returns medication schedule in ESP32-compatible format.
 5. **Hand Detection:** IR sensor confirms hand is positioned correctly
 6. **Dispensing:** Servo motor rotates to release pills from designated compartment
 7. **Missed Dose Alert:** If user doesn't respond within timeout period, Telegram notification is sent to caregiver
-
-### State Machine
-
-```
-IDLE → ALARM → FINGERPRINT_CHECK → HAND_DETECT → DISPENSE → IDLE
-                      ↓
-                 TIMEOUT → TELEGRAM_ALERT
-```
 
 ---
 
@@ -199,91 +163,4 @@ Detailed circuit connections and schematics are available:
 
 ---
 
-## Configuration Files
-
-### schedules.json Format
-```json
-{
-  "schedules": [
-    {
-      "id": 1,
-      "compartment": 1,
-      "medicine": "Medicine Name",
-      "time": "HH:MM",
-      "enabled": true
-    }
-  ]
-}
-```
-
----
-
-## Troubleshooting
-
-### ESP32 Not Connecting to WiFi
-- Verify SSID and password in firmware
-- Check WiFi network is 2.4GHz (ESP32 doesn't support 5GHz)
-- Ensure router is in range
-
-### Fingerprint Sensor Not Working
-- Check sensor wiring (TX, RX, VCC, GND)
-- Verify baud rate matches firmware configuration
-- Re-enroll fingerprints if necessary
-
-### Servo Not Dispensing
-- Check servo power supply (may need external 5V)
-- Verify servo signal pin connection
-- Test servo angle limits in code
-
-### Telegram Alerts Not Sending
-- Verify bot token and chat ID
-- Check internet connectivity
-- Ensure Telegram API is not blocked by firewall
-
----
-
-## Future Enhancements
-
-- [ ] Mobile app for iOS/Android
-- [ ] Multiple user profiles with individual fingerprints
-- [ ] Medication refill reminders
-- [ ] Integration with pharmacy APIs
-- [ ] Voice notifications
-- [ ] Cloud-based schedule backup
-- [ ] Analytics dashboard for medication adherence
-
----
-
-## Safety & Compliance
-
-> [!WARNING]
-> This is a prototype device for educational purposes. For medical use, ensure compliance with local healthcare regulations and obtain necessary certifications.
-
-> [!IMPORTANT]
-> Always consult healthcare professionals for medication management. This device is a reminder tool and should not replace medical advice.
-
----
-
-## License
-
-This project is open-source and available for educational purposes.
-
----
-
-## Contributors
-
-Developed as an E-Lab project demonstrating IoT integration in healthcare applications.
-
----
-
-## Support
-
-For issues or questions:
-- Check the troubleshooting section above
-- Review circuit diagrams and schematics
-- Verify all hardware connections
-- Ensure software dependencies are installed
-
----
-
-**Built with ❤️ for better medication management**
+**Built with ❤️ for E-Lab Project**
